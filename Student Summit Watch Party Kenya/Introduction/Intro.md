@@ -160,4 +160,298 @@ A timer trigger invokes an Azure function app on a consistent schedule. To defin
 
 ---
 
-## Next unit: Exercise - Create a timer trigger
+# Exercise - Create a timer trigger
+
+
+You have used 1 of 10 sandboxes for today. More sandboxes will be available tomorrow.
+
+In this unit, we create an Azure Function app that's invoked every 20 seconds using a timer trigger.
+
+## Create an Azure Function App
+
+Let’s start by creating an Azure Function App in the portal.
+
+1.  Sign in to the [Azure portal](https://portal.azure.com/learn.docs.microsoft.com) using the same account you used to activate the sandbox.
+    
+2.  Under **Azure services**, select **Create a resource**.
+    
+    ![Screenshot of Azure portal menu and Create a resource option.](https://learn.microsoft.com/en-us/training/modules/execute-azure-function-with-triggers/media/4-create-a-resource.png)
+    
+    The **Create a resource** pane appears.
+    
+3.  In the **Create a resource** menu, select **Web**, and then select **Function App** from the results. Optionally, you can enter **Function App** in the search bar, and press Enter. On the **Function App** pane that appears, select **Create**. The **Create Function App** pane appears.
+    
+4.  On the **Basics** tab, enter the following values for each setting.
+    
+    Setting
+    
+    Value
+    
+    **Project Details**
+    
+    Subscription
+    
+    Select the **Concierge Subscription** for this exercise
+    
+    Resource Group
+    
+    Select 'learn-5ed9f517-1921-42b5-9506-9e5e7a5993c1' resource group from the dropdown list.
+    
+    **Instance Details**
+    
+    Function App name
+    
+    _<your-webapp-name>_. Enter a globally unique name for your function app.
+    
+    Publish
+    
+    Code
+    
+    Runtime stack
+    
+    Select one of the languages supported for in-portal development: **.NET**, **Node.js**, or **PowerShell Core**.
+    
+    Version
+    
+    Use the suggested default version of your language runtime.
+    
+    Region
+    
+    Select a location close to you.
+    
+    **Operating system**
+    
+    Operating System
+    
+    Windows
+    
+    **Plan**
+    
+    Plan type
+    
+    Consumption (Serverless). When using the Consumption Plan type, you're charged for each execution of your function, and resources are automatically allocated based on your app workload.
+    
+5.  Select **Next : Hosting**, and enter the following values for each setting.
+    
+    Setting
+    
+    Value
+    
+    **Storage**
+    
+    Storage account
+    
+    Defaults to (New) and a unique storage account name. You can change the name if you like.
+    
+6.  Select **Review + create** to validate your input, and then select **Create**. Deployment progress displays the items that are created. It may take a minute or two for deployment to complete.
+    
+7.  When deployment is complete, select **Go to resource**. The **Overview** pane for your _Function App_ appears.
+    
+
+## Create and configure a timer-triggered function
+
+Let's create a timer trigger in your function.
+
+1.  In the **Function App** menu, under **Functions**, select **Functions**. The **Functions** pane for your _Function App_ appears.
+    
+2.  On the command bar, select **Create**. It may take a few moments for your permissions to propagate to use this service. The **Create function** pane appears.
+    
+3.  Under **Select a template**, select **Timer trigger**.
+    
+4.  Under **Template details**, enter the following value into the **Schedule** field, and then select **Create**.
+    
+    logCopy
+    
+    ```
+    */20 * * * * *
+    ```
+    
+    The value in this parameter represents the CRON expression with six places for time precision: {second} {minute} {hour} {day} {month} {day-of-week}. The first place value represents every 20 seconds.
+    
+
+## Test the timer
+
+Now that we've configured the timer, it will invoke the function on the interval we defined.
+
+1.  On the **TimerTrigger1** pane, in the left menu pane, under **Developer**, select **Code + Test**. The **Code + Test** pane appears.
+    
+     Note
+    
+    Azure automatically provides a default name for a new trigger that you create. **TimerTrigger1** is default value that you can change when you create a new trigger.
+    
+2.  The **Logs** session pane opens at the bottom of the page. Select the **App Insight Logs** drop-down, and then select **Filesystem Logs**. Select **OK** when the **Switching to filesystem based logs...** message displays.
+    
+    ![Screenshot that shows the function Code + Test pane with the Filesystem Log displayed.](https://learn.microsoft.com/en-us/training/modules/execute-azure-function-with-triggers/media/4-azure-function-logs.png)
+    
+3.  Observe that a new message arrives every 20 seconds in the log pane.
+    
+4.  To stop the function, select **Stop** in the command bar of the _Logs_ pane.
+    
+5.  To disable the function, in the **TimerTrigger1** menu, select **Overview**, and then in the command bar, select **Disable**.
+    
+
+---
+
+
+# Execute an Azure function with an HTTP request
+
+
+An HTTP request is a common operation on most platforms and devices. Whether it's a request to look up a word in a dictionary or to get the local weather, we send HTTP requests all the time. Azure Functions allows us to quickly create a piece of logic to execute when an HTTP request is received.
+
+In this unit, you'll learn how to create and invoke an Azure function using an HTTP trigger. You'll also explore some of the customization options available for HTTP triggers.
+
+## What is an HTTP trigger?
+
+An HTTP trigger is a trigger that executes a function when it receives an HTTP request. HTTP triggers have many capabilities and customizations, including:
+
+-   Provide authorized access by supplying keys.
+-   Restrict which HTTP verbs are supported.
+-   Return data back to the caller.
+-   Receive data through query string parameters or through the request body.
+-   Support URL route templates to modify the function URL.
+
+When you create an HTTP trigger, you need to select a programming language, provide a trigger name, and select an Authorization level.
+
+## What is an HTTP trigger Authorization level?
+
+An HTTP trigger Authorization level is a flag that indicates whether an incoming HTTP request needs an API key for authentication.
+
+There are three Authorization levels:
+
+1.  Function
+2.  Anonymous
+3.  Admin
+
+The **Function** and **Admin** levels are "key" based. To send an HTTP request, you must supply a key for authentication. There are two types of keys: _function_ and _host_. The difference between the two keys is their scope. Function keys are specific to a function. Host keys apply to all functions inside the function app. If your Authorization level is set to **Function**, you can use either a _function_ or a _host_ key. If your Authorization level is set to **Admin**, you must supply a _host_ key.
+
+The **Anonymous** level means that authentication isn't required. This exercise uses the Anonymous authorization level.
+
+## How to create an HTTP trigger
+
+Just like a timer trigger, you can create an HTTP trigger through the Azure portal. Inside your Azure function, select **HTTP trigger** from the list of predefined trigger types, then enter the logic that you want to execute and make any customizations, like restricting the use of certain HTTP verbs.
+
+One setting that's important to understand is **Request parameter name**. This setting is a string that represents the name of the parameter that contains the information about an incoming HTTP request. By default, the name of the parameter is _req_.
+
+## How to invoke an HTTP trigger
+
+To invoke an HTTP trigger, you send an HTTP request to the URL for your function. To get this URL, go to the code page for your function and select the **Get function URL** link.
+
+![Screenshot of the Azure portal showing a Functions App pane with the app's Get function URL button highlighted.](https://learn.microsoft.com/en-us/training/modules/execute-azure-function-with-triggers/media/5-function-url.png)
+
+After you have the URL for your function, you can send HTTP requests. If your function receives data, remember that you can either use query string parameters or supply the data through the request body.
+
+An HTTP trigger invokes an Azure function when it receives an HTTP request to its function URL. HTTP triggers allow you to receive data and return data back to the caller.
+
+
+# Exercise - Create an HTTP trigger
+
+
+You have used 1 of 10 sandboxes for today. More sandboxes will be available tomorrow.
+
+In this unit, we're going to create an Azure function that accepts an HTTP request with a single string. The function returns a string back to the caller to represent success or failure. We'll continue working on the function from the previous exercise.
+
+## Create an HTTP trigger
+
+Let's continue using our existing Azure Functions app and add an HTTP trigger.
+
+1.  Make sure you're signed into the [Azure portal](https://portal.azure.com/learn.docs.microsoft.com) using the same account you activated the sandbox with.
+    
+2.  On the Azure portal menu or from the **Home** page, under **Azure services**, select **All resources**.
+    
+3.  Select your Function App identified under the _Type_ column. Your **Function App** pane appears.
+    
+4.  In the left menu pane, under **Functions**, select **Functions**. The **Functions** pane for your function app appears.
+    
+5.  On the top menu bar, select **Create**. This action starts the function creation process. The **Create function** pane appears.
+    
+6.  In the **Select a template** section, select **HTTP trigger**.
+    
+7.  In the **Template details** section, in **New Function** field, enter a name for the function. Scroll down and in the **Authorization level** dropdown list, select _Anonymous_, and then select **Create**. Your newly created Function pane appears.
+    
+8.  In the left menu pane, under **Developer**, select **Code + Test**, and review the auto-generated code to get an idea about what's going on. The _req_ parameter represents the incoming request and contains a _name_ parameter. Check to see if _name_ has a value. If it does, we return a greeting. Otherwise, it continues to ask for a value.
+    
+
+## Get your function URL
+
+Now that we've created the HTTP trigger, let's get the function URL so we can begin to make a request.
+
+1.  On the top menu bar, select **Get Function Url**. The **Get Function Url** dialog appears.
+    
+2.  In the **URL** field, select the **Copy to clipboard** icon.
+    
+
+## Issue a GET request to your HTTP trigger
+
+Let's issue a GET request for the URL to see if we get a response.
+
+1.  Open a new tab in your web browser.
+    
+2.  Paste the URL into the address bar.
+    
+3.  Add a query parameter called _name_ with your name to the URL; for example, `https://<your-webapp-name>.azurewebsites.net/api/HttpTrigger1?name=Jesse`
+    
+4.  Press Enter to submit the request.
+    
+5.  The message, **Hello, Jesse. This HTTP triggered function executed successfully.** displays.
+
+# Execute an Azure function when a blob is created
+
+Completed100 XP
+
+-   10 minutes
+
+Imagine you're a photographer and you have a website that displays your pictures of the day. Because you're busy, you don't have a consistent upload schedule, but you want to notify your fans when you upload a picture. You decide to create an Azure function to automatically send a tweet whenever you upload an image to your Azure Storage blob container.
+
+Here, you learn how to create a blob trigger and instruct it to monitor a specific location in your Azure Storage blob container.
+
+## What is Azure Storage?
+
+Azure Storage is Microsoft's cloud storage solution that supports all types of data, including: blobs, queues, and NoSQL. The goal of Azure Storage is to provide data storage that's:
+
+-   Highly available
+-   Secure
+-   Scalable
+-   Managed
+
+We're not going to focus on Azure Storage too much. Instead, we use it to create blobs that will trigger our function to run.
+
+## What is Azure Blob storage?
+
+Azure Blob storage is an object storage solution that's designed to store large amounts of unstructured data.
+
+For example, Azure Blob storage is great at doing things like:
+
+-   Storing files
+-   Serving files
+-   Streaming video and audio
+-   Logging data
+
+There are three types of blobs: **block blobs**, **append blobs**, and **page blobs**. Block blobs are the most common type. They allow you to store text or binary data efficiently. Append blobs are like block blobs, but they're designed more for append operations like creating a log file that's being constantly updated. Finally, page blobs are made up of pages and are designed for frequent random read and write operations.
+
+## What is a blob trigger?
+
+A blob trigger is a trigger that executes a function when a file is uploaded or updated in Azure Blob storage. To create a blob trigger, you create an Azure Storage account and provide a location that the trigger monitors.
+
+## How to create a blob trigger
+
+Just like the other triggers we've seen so far, you create a blob trigger in the Azure portal. Inside your Azure function, select **Blob trigger** from the list of predefined trigger types. Then, you enter the logic that you want to execute when a blob is created or updated.
+
+One setting that's important to understand is the **Path**. The **Path** tells the blob trigger where to monitor to see if a blob is uploaded or updated. By default, the **Path** value is:
+
+Copy
+
+```
+samples-workitems/{name}
+```
+
+Let's break down this concept into two pieces: _samples-workitems_ and _{name}_. The first part, _samples-workitems_, represents the blob container that the trigger monitors. The second part, _{name}_ means that every type of file will cause the trigger to invoke the function. The function is invoked because there's no filter. For example, we could make the trigger invoke the function only when a PNG file is added by using syntax like:
+
+Copy
+
+```
+samples-workitems/{name}.png
+```
+
+The last significant piece of information for this concept is the text _name_. The _name_ represents a parameter in your Azure function that receives the name of the added file. For example, if we upload a file named _resume.txt_, my Azure function receives that value as a string through a parameter called _name_.
+
+A blob trigger invokes an Azure function when it sees activity at a specific location in your Azure Storage blob account. You set the location to monitor by modifying the **Path** value in the Azure portal.
