@@ -37,6 +37,7 @@ def index_post():
         'Content-type': 'application/json',
         'X-ClientTraceId': str(uuid.uuid4())
     }
+    
 
     # Create the body of the request with the text to be translated
     body = [{ 'text': original_text }]
